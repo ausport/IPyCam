@@ -9,6 +9,7 @@ PIXEL_FORMATS_CONVERSIONS = {
     'BayerRG8': cv2.COLOR_BAYER_RG2RGB,
 }
 
+_frames = []
 
 def display_frame(frame: Frame, delay: Optional[int] = 1) -> None:
     """
@@ -17,11 +18,11 @@ def display_frame(frame: Frame, delay: Optional[int] = 1) -> None:
     :param delay: Display delay in milliseconds, use 0 for indefinite.
     """
     print('frame {}'.format(frame.data.frameID))
-
+    _frames.append(frame)
+    return
+    
     # get a copy of the frame data
     image = frame.buffer_data_numpy()
-    
-    pass
 
     # convert colour space if desired
     try:
