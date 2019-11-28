@@ -1,8 +1,8 @@
-from pymba import Vimba
+from pymba import Vimba, Frame
 from typing import Optional
 import cv2
-from pymba import Frame
 from PIL import Image
+from time import sleep
 
 # todo add more colours
 PIXEL_FORMATS_CONVERSIONS = {
@@ -20,6 +20,8 @@ def display_frame(frame: Frame, delay: Optional[int] = 1) -> None:
 
     # get a copy of the frame data
     image = frame.buffer_data_numpy()
+    
+    pass
 
     # convert colour space if desired
     try:
@@ -37,29 +39,22 @@ def display_frame(frame: Frame, delay: Optional[int] = 1) -> None:
     im.save("./image.png")
 
 
+
 if __name__ == '__main__':
 
     with Vimba() as vimba:
         camera = vimba.camera(0)
         camera.open()
 
-        camera.arm('SingleFrame')
+        # arm the camera and provide a function to be called upon frame ready
+        camera.arm('Continuous', display_frame)
+        camera.start_frame_acquisition()
 
-        # capture a single frame, more than once if desired
-        for i in range(1):
-            try:
-                frame = camera.acquire_frame()
-                display_frame(frame, 0)
-            except:
-                pass
-                # rearm camera upon frame timeout
-                #if e.error_code == VimbaException.ERR_TIMEOUT:
-                #    print(e)
-                #    camera.disarm()
-                #    camera.arm('SingleFrame')
-                #else:
-                #    raise
+        sleep(5)
 
+        # stop frame acquisition
+        # start_frame_acquisition can simply be called again if the camera is still armed
+        camera.stop_frame_acquisition()
         camera.disarm()
 
         camera.close()
