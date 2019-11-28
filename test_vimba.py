@@ -20,7 +20,6 @@ def log_camera_props(camera):
 
     feature = camera.feature("DeviceModelName")
     print("DeviceModelName: {0}".format(feature.value))
-    print(feature.info)
 
     feature = camera.feature("PixelFormat")
     print("PixelFormat: {0}".format(feature.value))
