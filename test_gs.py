@@ -1,14 +1,21 @@
 import numpy as np
 import cv2
+import sys
+
+#gst-launch-1.0 aravissrc camera-name="JAI Corporation-WU240330" ! video/x-bayer,format=rggb,width=1936,height=1216,framerate=25/1 ! bayer2rgb ! videoconvert ! avenc_mjpeg ! filesink location=frame.jpeg  -v
 
 cap_receive = cv2.VideoCapture(
-	'xlnxvideosrc src-type=mipi ! video/x-raw, width=1920, height=1080, format=YUY2, framerate=60/1! videoconvert ! appsink',
+	'aravissrc camera-name="JAI Corporation-WU240330" ! video/x-bayer, format=rggb, width=1936,height=1216, framerate=150/1 ! bayer2rgb ! videoconvert ! appsink',
 	cv2.CAP_GSTREAMER)
+
 out_send = cv2.VideoWriter(
 	'appsrc ! videoconvert ! xlnxvideosink sink-type="dp" plane-id=34 sync=false fullscreen-overlay=true',
 	cv2.CAP_GSTREAMER, 0, 60, (1920, 1080), True)
 
-while True:
+print("Trying...")
+
+
+for i in range(0, 100):
 	if not cap_receive.isOpened():
 		print('VideoCapture not opened')
 		exit(0)
@@ -19,11 +26,10 @@ while True:
 		print('empty frame')
 		continue
 
-	print('received image')
-	out_send.write(frame)
+	print('received image {0}'.format(i))
+	# out_send.write(frame)
 
-	if cv2.waitKey(1) & 0xFF == ord('q'):
-		break
 
-cap_receive.release()
-out_send.release()
+sys.exit(1)
+# cap_receive.release()
+# out_send.release()
