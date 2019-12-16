@@ -26,10 +26,11 @@ def do_test(camera, dest_path = None, fps=None, w=None, h=None):
 
 	print("* * * * * * * * * *")
 	print("Running GStreamer Test:")
-	print("\tDevice Name:      {0}".format(camera))
-	print("\tTarget Rate:      {0} f.p.s".format(_frame_rate))
-	print("\tCapture Duration: {0} frames.".format(_frame_rate*5))
-	print("\tCapture Path:     {0}.".format(dest_path or "n/a"))
+	print("\tDevice Name:       {0}".format(camera))
+	print("\tTarget Rate:       {0} f.p.s".format(_frame_rate))
+	print("\tTarget Resolution: {0}x{1}".format(_width, _height))
+	print("\tCapture Duration:  {0} frames.".format(_frame_rate*5))
+	print("\tCapture Path:      {0}.".format(dest_path or "n/a"))
 	print("* * * * * * * * * *")
 
 	if not cap_receive.isOpened():
@@ -61,7 +62,7 @@ if __name__ == '__main__':
 	argv = sys.argv[1:]
 
 	if len(argv) == 0:
-		do_test(camera=_camera_name, dest_path=None, fps=150)
+		do_test(camera=_camera_name, dest_path=None, fps=150, w=600, h=600)
 		sys.exit(1)
 
 	if "-o" in argv:
