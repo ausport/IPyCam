@@ -6,6 +6,7 @@ import time
 os.environ["GST_PLUGIN_PATH"] = "/usr/local/lib/gstreamer-1.0"
 # gst-launch-1.0 aravissrc camera-name="JAI Corporation-WU240330" ! video/x-bayer,format=rggb,width=1936,height=1216,framerate=25/1 ! bayer2rgb ! videoconvert ! avenc_mjpeg ! filesink location=frame.jpeg  -v
 
+
 def do_test(camera, dest_path = None, fps=None, w=None, h=None):
 
 	assert camera is not None, "A camera name must be passed!"
@@ -31,11 +32,12 @@ def do_test(camera, dest_path = None, fps=None, w=None, h=None):
 	print("\tCapture Path:     {0}.".format(dest_path or "n/a"))
 	print("* * * * * * * * * *")
 
+	if not cap_receive.isOpened():
+		print('VideoCapture not opened')
+		exit(0)
+
 	_t = time.time()
 	for i in range(0, _frame_rate*5):
-		if not cap_receive.isOpened():
-			print('VideoCapture not opened')
-			exit(0)
 
 		ret, frame = cap_receive.read()
 
