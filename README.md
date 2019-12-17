@@ -21,13 +21,19 @@ wget http://ftp.acc.umu.se/pub/GNOME/sources/aravis/0.6/aravis-0.6.4.tar.xz
 tar -xf aravis-0.6.4.tar.xz
 ```
 
+The current version of `intltool` may need to be installed:
+
+```angular2html
+sudo apt-get install intltool
+```
+
 Install the Aravis plugins.
 
 ```angular2
 cd aravis-0.6.4
 ./configure
 make
-make install
+sudo make install
 ```
 
 
@@ -35,7 +41,7 @@ make install
 
 [From the website] By default, USB devices permissions may not be sufficient to allow 
 any user to access the USB3 cameras. This permissions can be changed by using an 
-udev rule file. There is a file example in Aravis sources, *src/aravis.rules*. 
+udev rule file. 
 This file must be placed in `/etc/udev/rules.d` directory 
 (The exact location may depend on the distribution you are using). 
 This file only contains declarations for a couple of vendors. 
@@ -50,5 +56,40 @@ SUBSYSTEM=="usb", ATTRS{idVendor}=="14fb", MODE:="0666", TAG+="uaccess", TAG+="u
 ```
 
 It should be copied to the `/etc/udev/rules.d` directory.
+
+**Reboot.**
+
+
+```angular2
+export GST_PLUGIN_PATH="/usr/local/lib/gstreamer-1.0"
+```
+
+Test the device with:
+
+```angular2html
+cd /Tests
+./arv-camera-test 
+```
+
+If everything works...
+
+```angular2html
+Looking for the first available camera
+vendor name           = JAI Corporation
+model name            = GO-2400C-USB
+device id             = (null)
+image width           = 1936
+image height          = 1216
+horizontal binning    = 1
+vertical binning      = 1
+payload               = 2354176 bytes
+exposure              = 6210 µs
+gain                  = 1 dB
+uv bandwidth limit     = 0 [1..-1]
+Frame rate = 62 Hz
+Frame rate = 52 Hz
+Frame rate = 52 Hz
+Frame rate = 52 Hz
+```
 
 
