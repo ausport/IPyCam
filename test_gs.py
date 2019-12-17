@@ -14,7 +14,6 @@ def do_test(camera, dest_path = None, fps=None, w=None, h=None):
 
 	_width = w or 1936
 	_height = h or 1216
-
 	_frame_rate = fps or 50
 
 	cap_receive = cv2.VideoCapture(
@@ -100,12 +99,45 @@ def do_test(camera, dest_path = None, fps=None, w=None, h=None):
 if __name__ == '__main__':
 
 	_camera_name = "JAI Corporation-WU240330"
+	print(_camera_name)
 
-	argv = sys.argv[1:]
+	_w = None
+	_h = None
+	_path = None
+	_fps = None
 
-	if len(argv) == 0:
-		do_test(camera=_camera_name, dest_path=None, fps=150, w=600, h=600)
-		sys.exit(1)
+	# include standard modules
+	import getopt, sys
 
-	if "-o" in argv:
-		do_test(camera=_camera_name, dest_path=argv[1], fps=25)
+	# read commandline arguments, first
+	fullCmdArguments = sys.argv
+
+	# - further arguments
+	argumentList = fullCmdArguments[1:]
+
+	unixOptions = "w:h:o:f:"
+	gnuOptions = ["width=", "height=", "output=", "fps="]
+
+	try:
+		arguments, values = getopt.getopt(argumentList, unixOptions, gnuOptions)
+	except getopt.error as err:
+		# output error, and return with an error code
+		print(str(err))
+		sys.exit(2)
+
+	# evaluate given options
+	for currentArgument, currentValue in arguments:
+		if currentArgument in ("-w", "--width"):
+			print("Width = {0}".format(currentValue))
+			_w = int(currentValue)
+		elif currentArgument in ("-h", "--height"):
+			print("Height = {0}".format(currentValue))
+			_h = int(currentValue)
+		elif currentArgument in ("-f", "--fps"):
+			print("FPS = {0}".format(currentValue))
+			_fps = int(currentValue)
+		elif currentArgument in ("-o", "--output"):
+			print("Output = {0}".format(currentValue))
+			_path = currentValue
+
+	do_test(camera=_camera_name, dest_path=_path, fps=_fps, w=_w, h=_h)
