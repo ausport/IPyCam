@@ -97,6 +97,7 @@ def do_test(camera, dest_path = None, fps=None, w=None, h=None):
 	print("\tHough Transform:    {0:02f} msecs".format(_t*1000.))
 	print("* * * * * * * * * *")
 
+	# TODO - Long results in log file.
 
 if __name__ == '__main__':
 
