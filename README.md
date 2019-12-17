@@ -92,4 +92,8 @@ Frame rate = 52 Hz
 Frame rate = 52 Hz
 ```
 
+To additionally run the IPyCam tests, the following dependencies are required:
 
+```angular2html
+pip3 install tqdm termcolor --user
+```
