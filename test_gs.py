@@ -31,7 +31,7 @@ def do_test(camera, dest_path = None, fps=None, w=None, h=None):
 	print("\tTarget Resolution: {0}x{1}".format(_width, _height))
 	print("\tCapture Duration:  {0} frames.".format(_frame_rate*5))
 	print("\tCapture Path:      {0}.".format(dest_path or "n/a"))
-	print("* * * * * * * * * *")
+
 
 	if not cap_receive.isOpened():
 		print('VideoCapture not opened')
@@ -52,7 +52,50 @@ def do_test(camera, dest_path = None, fps=None, w=None, h=None):
 	_t = time.time() - _t
 	_fps = (_frame_rate*5.) / _t
 
-	print("Harvested {0} frames in {1:04f} seconds.  {2:04f} f.p.s.".format(i+1, _t, _fps))
+	print("\n\t* Harvested {0} frames in {1:04f} seconds.  {2:04f} f.p.s.".format(i+1, _t, _fps))
+
+	print("\n* * * * * * * * * *")
+	print("Running OpenCV Tests:")
+
+	# Resize an image
+	_t = time.time()
+	_tmp = cv2.resize(frame, None, fx=0.5, fy=0.5, interpolation=cv2.INTER_CUBIC)
+	_t = time.time() - _t
+	print("\tImage Resize:       {0:02f} msecs".format(_t*1000.))
+
+	# GaussianBlur
+	_t = time.time()
+	cv2.GaussianBlur(frame,(5,5),0)
+	_t = time.time() - _t
+	print("\tGaussianBlur:       {0:02f} msecs".format(_t*1000.))
+
+	# Dilation
+	_t = time.time()
+	kernel = np.ones((5, 5), np.uint8)
+	cv2.dilate(frame, kernel, iterations=1)
+	_t = time.time() - _t
+	print("\tDilation:           {0:02f} msecs".format(_t*1000.))
+
+	# Canny Edge
+	_t = time.time()
+	cv2.Canny(frame, 100, 200)
+	_t = time.time() - _t
+	print("\tCanny Edge:         {0:02f} msecs".format(_t*1000.))
+
+	# Fourier Transform
+	_t = time.time()
+	np.fft.fft2(frame)
+	_t = time.time() - _t
+	print("\tFourier Transform:  {0:02f} msecs".format(_t*1000.))
+
+	# Hough Transform
+	_t = time.time()
+	gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+	edges = cv2.Canny(gray, 50, 150, apertureSize=3)
+	cv2.HoughLines(edges, 1, np.pi / 180, 200)
+	_t = time.time() - _t
+	print("\tHough Transform:    {0:02f} msecs".format(_t*1000.))
+	print("* * * * * * * * * *")
 
 
 if __name__ == '__main__':
