@@ -3,6 +3,7 @@ import cv2
 import sys
 import os
 import time
+import getopt
 from logger import log, create_file_handler
 os.environ["GST_PLUGIN_PATH"] = "/usr/local/lib/gstreamer-1.0"
 # gst-launch-1.0 aravissrc camera-name="JAI Corporation-WU240330" ! video/x-bayer,format=rggb,width=1936,height=1216,framerate=25/1 ! bayer2rgb ! videoconvert ! avenc_mjpeg ! filesink location=frame.jpeg  -v
@@ -106,15 +107,7 @@ if __name__ == '__main__':
 	_path = None
 	_fps = None
 
-	# include standard modules
-	import getopt, sys
-
-	# read commandline arguments, first
-	fullCmdArguments = sys.argv
-
-	# - further arguments
-	argumentList = fullCmdArguments[1:]
-
+	argumentList = sys.argv[1:]
 	unixOptions = "w:h:o:f:"
 	gnuOptions = ["width=", "height=", "output=", "fps="]
 
@@ -125,7 +118,6 @@ if __name__ == '__main__':
 		print(str(err))
 		sys.exit(2)
 
-	# evaluate given options
 	for currentArgument, currentValue in arguments:
 		if currentArgument in ("-w", "--width"):
 			print("Width = {0}".format(currentValue))
