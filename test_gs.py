@@ -8,18 +8,35 @@ from logger import log, create_file_handler
 os.environ["GST_PLUGIN_PATH"] = "/usr/local/lib/gstreamer-1.0"
 # gst-launch-1.0 aravissrc camera-name="JAI Corporation-WU240330" ! video/x-bayer,format=rggb,width=1936,height=1216,framerate=25/1 ! bayer2rgb ! videoconvert ! avenc_mjpeg ! filesink location=frame.jpeg  -v
 
+# gst-launch-1.0 v4l2src device=/dev/video0 ! 'video/x-raw,width=640,height=480,framerate=30/1' ! videoconvert ! ximagesink
 
 def do_test(camera, dest_path = None, fps=None, w=None, h=None):
 
 	assert camera is not None, "A camera name must be passed!"
 
+	# "JAI Corporation-WU240330"
 	_width = w or 1936
 	_height = h or 1216
 	_frame_rate = fps or 50
 
-	cap_receive = cv2.VideoCapture(
-		'aravissrc camera-name="{0}" ! video/x-bayer, format=rggb, width={1}, height={2}, framerate={3}/1 ! bayer2rgb ! videoconvert ! appsink'.format(camera, _width, _height, _frame_rate),
-		cv2.CAP_GSTREAMER)
+	# "HD Webcam C615"
+	_width = w or 640
+	_height = h or 480
+	_frame_rate = fps or 30
+
+	#cap_receive = cv2.VideoCapture(
+	#	'aravissrc camera-name="{0}" ! video/x-bayer, format=rggb, width={1}, height={2}, framerate={3}/1 ! bayer2rgb ! videoconvert ! appsink'.format(camera, _width, _height, _frame_rate),
+	#	cv2.CAP_GSTREAMER)
+
+#	cap_receive = cv2.VideoCapture(
+#		'aravissrc camera-name="{0}" ! video/x-raw,width={0},height={1},framerate={2}/1 ! videoconvert ! appsink',
+#		cv2.CAP_GSTREAMER)
+
+	cap_receive = cv2.VideoCapture(0)
+
+	cap_receive.set(cv2.CAP_PROP_FRAME_WIDTH,_width)
+	cap_receive.set(cv2.CAP_PROP_FRAME_HEIGHT,_height)
+	cap_receive.set(cv2.CAP_PROP_FPS,_frame_rate/1)
 
 	if dest_path is not None:
 		fourcc = cv2.VideoWriter_fourcc('m', 'p', '4', 'v')
@@ -40,6 +57,7 @@ def do_test(camera, dest_path = None, fps=None, w=None, h=None):
 
 	_t = time.time()
 	for i in range(0, _frame_rate*5):
+		print(i)
 
 		ret, frame = cap_receive.read()
 
@@ -47,8 +65,12 @@ def do_test(camera, dest_path = None, fps=None, w=None, h=None):
 			print('empty frame')
 			continue
 
-		if dest_path is not None:
-			out_send.write(frame)
+		_tmp = cv2.resize(frame, (300, 300), interpolation=cv2.INTER_CUBIC)
+		#_tmp = cv2.GaussianBlur(frame,(5,5),0)
+		cv2.imshow('frame',_tmp)
+		cv2.waitKey(1)
+		#if dest_path is not None:
+		#	out_send.write(frame)
 
 	_t = time.time() - _t
 	_fps = (_frame_rate*5.) / _t
@@ -59,7 +81,7 @@ def do_test(camera, dest_path = None, fps=None, w=None, h=None):
 
 	# Resize an image
 	_t = time.time()
-	_tmp = cv2.resize(frame, None, fx=0.5, fy=0.5, interpolation=cv2.INTER_CUBIC)
+	_tmp = cv2.resize(frame, (608, 608), interpolation=cv2.INTER_CUBIC)
 	_t = time.time() - _t
 	log.debug("\tImage Resize:       {0:02f} msecs".format(_t*1000.))
 
@@ -100,6 +122,7 @@ def do_test(camera, dest_path = None, fps=None, w=None, h=None):
 if __name__ == '__main__':
 
 	_camera_name = "JAI Corporation-WU240330"
+	_camera_name = "HD Webcam C615"
 	print(_camera_name)
 
 	_w = None
